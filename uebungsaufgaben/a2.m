@@ -63,7 +63,7 @@ q=a+ i*b;
 q=max(abs(complex(a,b)));
 r=linspace(0,pi,200);
 s=sin(r);
-plot(r,s)
+%plot(r,s)
 [val,index]=max(s);
 zero=find(s==0);%numerisch findet nicht alle
 big=find(s>0.5);
@@ -136,8 +136,55 @@ I=diag(C)';
 J=C(2:2:4,:);
 K=C(:,1:5);
 
+%4.14
+[i,j]=find(C>5);
+
+%4.15
 
 
+I=zeros(10,10);
+
+for i=1:1:10
+    if(mod(i,2) == 0)
+        I(i,i)=-1;
+    else
+        I(i,i)=1;
+    end
+    
+end
+
+for i=1:1:9
+    I(i,i+1)=i;
+end
+
+
+for i=2:1:10
+    I(i,i-1)=11-i;
+end
+
+%4.16
+
+ A=reshape(exp(i*linspace(0,2*pi,9)),3,3);
+ adim=size(A);
+ 
+if all(A == A'); 
+    asym='sym';
+else asym='nichtsym';
+end
+ 
+abet=abs(A);
+
+%5.17
+AB=A*B;
+AE=A*E;
+EA=E*A;
+
+Az=A(1,:)*A;
+%Az2=A*A(1,:);
+Ap=A.*A;
+Ainv=A';
+Ax=A*A;
+Awtf=A'*A;
 
 
 
