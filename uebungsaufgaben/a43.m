@@ -7,20 +7,23 @@ load diesel.dat
 % 'T [°C]','p [Pa]','rho [kg/mm^3]','nue [mm^2/s]','E [MPa]','a [m/s]'};
 
 t=diesel(:,1); %[C]
-p=diesel(:,2); %[Pa]
-p=p/(10^6);
+p=diesel(:,2); %[MPa]
+p=p./(10^6);%[Pa]
 nue=diesel(:,4); %[mm^2/s]
 
 %KoeffintenMatrix
-A=ones(length(t),1);
-A(:,2)=t;
-A(:,3)=p;
-A(:,4)=t.*p;
-A(:,5)=t.^2;
-A(:,6)=p.^2;
-A(:,7)=-nue;
-A(:,8)=-(nue.*t);
-A(:,9)=-(nue.*p);
+% A=ones(length(t),1);
+% A(:,2)=t;
+% A(:,3)=p;
+% A(:,4)=t.*p;
+% A(:,5)=t.^2;
+% A(:,6)=p.^2;
+% A(:,7)=-nue;
+% A(:,8)=-(nue.*t);
+% A(:,9)=-(nue.*p);
+
+T=t;
+A  = [ones(length(T),1)  T  p  T.*p  T.^2  p.^2  -T.*nue -p.*nue];
 
 c=A\nue;%Koffeffizenten
 
@@ -32,7 +35,7 @@ v=visk(0,500,c);
 
 x=min(t):stepsize(t):max(t);
 y=min(p):stepsize(p):max(p);%1*10^6 Schritte;
-Z=zeros(length(y),length(x));
+MESS=zeros(length(y),length(x));
 
 
 %Messdatenmatrix
@@ -47,31 +50,31 @@ for i=1:1:length(t)
     yindex=find(y==psearch);
     
     if (xindex>0 && yindex>0)
-        Z(yindex,xindex)=nvalue;
+        MESS(yindex,xindex)=nvalue;
     end
 
 end;
 %plot
 subplot(3,1,1);
-s=surf(x,y,Z);
+s=surf(x,y,MESS);
 s.EdgeColor = 'none';
 
-W=zeros(length(y),length(x));
+APPROX=zeros(length(y),length(x));
 %plot(ownvalues)
 for i=1:1:length(x)
     for j=1:1:length(y)
-    W(j,i)=visk(x(i),y(i),c);
+    APPROX(j,i)=visk(x(i),y(i),c);
     end
 end
 
 subplot(3,1,2);
-tp=surf(x,y,W);
+tp=surf(x,y,APPROX);
 tp.EdgeColor = 'none';
 
 DIFF=zeros(length(y),length(x));  
 for i=1:1:length(x)
     for j=1:1:length(y)
-        DIFF(j,i)=Z(j,i)-W(j,i);
+        DIFF(j,i)=MESS(j,i)-APPROX(j,i);
     end
 end  
 subplot(3,1,3);
